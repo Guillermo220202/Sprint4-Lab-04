@@ -1,0 +1,109 @@
+---
+title: "Análisis Exploratorio del Dataset MTCars"
+author: "Analista de Datos"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: readable
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(DT)
+library(ggplot2)
+```
+
+# Introducción
+
+Este documento presenta un **análisis exploratorio** del conjunto de datos *MTCars*, que contiene información sobre diferentes modelos de automóviles. El análisis se centrará en examinar las relaciones entre variables clave y proporcionar visualizaciones informativas.
+
+## Objetivos del Análisis
+
+Los principales objetivos de este análisis son:
+
+1. Examinar la distribución de las características principales de los vehículos
+2. Analizar la relación entre consumo de combustible y otras variables
+3. Identificar patrones relevantes en los datos
+4. Proporcionar visualizaciones claras de las relaciones encontradas
+
+# Análisis de Datos
+
+## Carga y Vista Previa de Datos
+
+```{r cargar_datos}
+data(mtcars)
+```
+
+### Tabla Estática con kable
+
+A continuación se muestran las primeras filas del conjunto de datos usando una tabla estática:
+
+```{r tabla_estatica}
+kable(head(mtcars),
+      caption = "Primeras filas del dataset MTCars",
+      align = c('l', rep('c', ncol(mtcars)-1)))
+```
+
+### Tabla Interactiva con DT
+
+La siguiente tabla interactiva permite explorar el conjunto completo de datos:
+
+```{r tabla_interactiva}
+datatable(mtcars,
+          options = list(pageLength = 5),
+          caption = "Dataset MTCars Completo")
+```
+
+## Visualización de Datos
+
+### Relación entre Consumo y Potencia
+
+El siguiente gráfico muestra la relación entre el consumo de combustible (mpg) y la potencia del motor (hp):
+
+```{r grafico_dispersion}
+ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point(aes(color = factor(cyl)), size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  labs(title = "Relación entre Consumo y Potencia",
+       x = "Potencia (hp)",
+       y = "Consumo (mpg)",
+       color = "Cilindros") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Análisis de Correlaciones
+
+```{r correlaciones}
+cor_matrix <- cor(mtcars[, c("mpg", "hp", "wt", "qsec")])
+kable(cor_matrix,
+      caption = "Matriz de Correlaciones",
+      digits = 3)
+```
+
+# Conclusiones
+
+Del análisis realizado podemos extraer las siguientes conclusiones:
+
+* Existe una **fuerte correlación negativa** entre el consumo de combustible y la potencia del motor
+* Los vehículos con más cilindros tienden a tener:
+  - Mayor potencia
+  - Menor eficiencia en consumo de combustible
+* El peso del vehículo también muestra una correlación significativa con el consumo
+
+## Hallazgos Adicionales
+
+El análisis también reveló que:
+
+1. La mayoría de los vehículos en el conjunto de datos tienen 6 u 8 cilindros
+2. Existe una variación considerable en la eficiencia del combustible entre diferentes modelos
+3. Los vehículos más ligeros tienden a tener mejor consumo de combustible
+
+# Referencias
+
+* Motor Trend Car Road Tests
+* Documentación de R sobre el dataset mtcars
